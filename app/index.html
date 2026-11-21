@@ -1,0 +1,111 @@
+<!doctype html>
+<html lang="de">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#1f6f5c">
+  <title>Waage</title>
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="icon" href="icon.svg" type="image/svg+xml">
+  <link rel="apple-touch-icon" href="icon-192.png">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header class="bar">
+    <h1>Waage</h1>
+    <span id="status" class="pill">Nicht verbunden</span>
+    <button id="btnSettings" class="icon-btn" aria-label="Einstellungen">
+      <svg viewBox="0 0 24 24" width="24" height="24" aria-hidden="true"><path fill="currentColor" d="M19.14 12.94a7.07 7.07 0 0 0 0-1.88l2.03-1.58a.5.5 0 0 0 .12-.64l-1.92-3.32a.5.5 0 0 0-.6-.22l-2.39.96a7.03 7.03 0 0 0-1.63-.94l-.36-2.54A.5.5 0 0 0 13.9 2h-3.84a.5.5 0 0 0-.49.42l-.36 2.54c-.59.24-1.13.56-1.63.94l-2.39-.96a.5.5 0 0 0-.6.22L2.67 8.48a.5.5 0 0 0 .12.64l2.03 1.58a7.07 7.07 0 0 0 0 1.88l-2.03 1.58a.5.5 0 0 0-.12.64l1.92 3.32c.13.22.39.31.6.22l2.39-.96c.5.38 1.04.7 1.63.94l.36 2.54c.04.24.25.42.49.42h3.84c.24 0 .45-.18.49-.42l.36-2.54c.59-.24 1.13-.56 1.63-.94l2.39.96c.22.09.47 0 .6-.22l1.92-3.32a.5.5 0 0 0-.12-.64l-2.03-1.58ZM12 15.5A3.5 3.5 0 1 1 12 8.5a3.5 3.5 0 0 1 0 7Z"/></svg>
+    </button>
+  </header>
+
+  <main>
+    <section id="connectView" class="card center">
+      <p id="connectHint">Sensor einschalten und verbinden.</p>
+      <button id="btnConnect" class="primary big">Verbinden</button>
+      <p id="noBluetooth" class="warn" hidden>Dieser Browser kann kein Web Bluetooth. Bitte Chrome auf Android verwenden.</p>
+    </section>
+
+    <section id="liveView" hidden>
+      <p id="notice" class="notice" hidden></p>
+
+      <article class="card">
+        <h2><span class="step">1</span> Querneigung</h2>
+        <svg id="rearView" class="diagram" viewBox="0 0 300 120" aria-hidden="true">
+          <line x1="10" y1="108" x2="290" y2="108" class="ground"/>
+          <g id="rearBody">
+            <rect x="60" y="30" width="180" height="44" rx="6" class="body"/>
+            <line x1="70" y1="88" x2="230" y2="88" class="axle"/>
+            <circle cx="70" cy="88" r="18" class="wheel" id="wheelLeft"/>
+            <circle cx="230" cy="88" r="18" class="wheel" id="wheelRight"/>
+          </g>
+          <text x="20" y="20" class="label">L</text>
+          <text x="272" y="20" class="label">R</text>
+        </svg>
+        <p id="rollAction" class="action">–</p>
+        <p class="sub"><span id="rollAngle">–</span></p>
+      </article>
+
+      <article class="card">
+        <h2><span class="step">2</span> Längsneigung</h2>
+        <svg id="sideView" class="diagram" viewBox="0 0 300 120" aria-hidden="true">
+          <line x1="10" y1="108" x2="290" y2="108" class="ground"/>
+          <g id="sideBody">
+            <rect x="120" y="30" width="160" height="44" rx="6" class="body"/>
+            <line x1="40" y1="68" x2="120" y2="68" class="axle"/>
+            <circle cx="210" cy="88" r="18" class="wheel"/>
+            <line x1="52" y1="68" x2="52" y2="100" class="axle"/>
+            <circle cx="52" cy="102" r="6" class="wheel"/>
+          </g>
+          <text x="14" y="20" class="label">vorne</text>
+        </svg>
+        <p id="pitchAction" class="action">–</p>
+        <p class="sub"><span id="pitchAngle">–</span></p>
+      </article>
+
+      <p id="stability" class="sub center">–</p>
+      <button id="btnDisconnect" class="ghost">Trennen</button>
+    </section>
+  </main>
+
+  <dialog id="settings">
+    <form method="dialog" id="settingsForm">
+      <h2>Einstellungen</h2>
+
+      <label>Spurweite (Mitte Reifen bis Mitte Reifen)
+        <span class="unit"><input id="track" type="number" inputmode="numeric" min="300" max="4000" step="1" required> mm</span>
+      </label>
+      <label>Abstand Achse bis Stützrad (leer = nur Grad anzeigen)
+        <span class="unit"><input id="hitch" type="number" inputmode="numeric" min="0" max="10000" step="1"> mm</span>
+      </label>
+      <label>Toleranz für „waagerecht“
+        <span class="unit"><input id="tolerance" type="number" inputmode="numeric" min="0" max="50" step="1" required> mm</span>
+      </label>
+
+      <fieldset>
+        <legend>Einbaulage</legend>
+        <p class="sub" id="orientationText">–</p>
+        <button type="button" id="btnDetect" class="secondary">Automatisch erkennen</button>
+        <p class="sub" id="detectHint" hidden></p>
+      </fieldset>
+
+      <fieldset>
+        <legend>Nullpunkt</legend>
+        <p class="sub">Nur setzen, wenn das Fahrzeug nachweislich waagerecht steht (z. B. mit Wasserwaage auf Achse und Rahmen geprüft). Wird im Sensor gespeichert.</p>
+        <div class="row">
+          <button type="button" id="btnZero" class="secondary">Nullpunkt setzen</button>
+          <button type="button" id="btnClearZero" class="ghost">Löschen</button>
+        </div>
+        <p class="sub" id="zeroHint" hidden></p>
+      </fieldset>
+
+      <div class="row end">
+        <button value="cancel" formnovalidate class="ghost">Abbrechen</button>
+        <button value="save" class="primary">Speichern</button>
+      </div>
+    </form>
+  </dialog>
+
+  <script src="app.js"></script>
+</body>
+</html>
